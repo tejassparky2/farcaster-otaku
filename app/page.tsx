@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MintingFlow from "../components/MintingFlow"; // Adjust to "./components/MintingFlow" if components folder is inside app/
-import sdk from "farcasterminiapp-sdk"; // Or import context provider if used
+import { sdk } from "@farcaster/miniapp-sdk";
+import MintingFlow from "../components/MintingFlow";
 
 interface User {
   fid: number;
@@ -16,37 +16,53 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchUser() {
+    const initApp = async () => {
       try {
+        // Get user context from Farcaster
         const context = await sdk.context();
         setUser({
           fid: context.user.fid,
           username: context.user.username,
           pfp: { url: context.user.pfp.url },
         });
+
+        // Signal app is ready (hides splash screen)
         await sdk.actions.ready();
         setReady(true);
       } catch (err) {
-        setError("Failed to load mini-app context");
+        console.error("Init error:", err);
+        setError("Failed to initialize mini-app");
         setReady(true);
       }
-    }
-    fetchUser();
+    };
+
+    initApp();
   }, []);
 
   if (!ready) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <h2 className="text-2xl font-bold">Loading...</h2>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-white">Loading Farcaster Otaku...</h2>
+          <p className="text-gray-300 mt-2">Getting your creativity ready</p>
+        </div>
       </div>
     );
   }
+
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-500 font-semibold">{error}</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-500">{error}</h2>
+        </div>
       </div>
     );
   }
-  return <MintingFlow user={user} />;
+
+  return (
+    <main className="bg-gradient-to-br from-purple-900 via-black to-pink-900 min-h-screen">
+      <MintingFlow user={user} />
+    </main>
+  );
 }
