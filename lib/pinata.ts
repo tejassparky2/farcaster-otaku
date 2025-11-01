@@ -1,4 +1,4 @@
-export async function uploadOtakuToPinata(
+export async function uploadToPinata(
   imageUrl: string,
   metadata: {
     fid: number;
