@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MintingFlow from "../components/MintingFlow"; // Adjust path as needed
-import sdk from "farcasterminiapp-sdk"; // Or context provider
+import MintingFlow from "../components/MintingFlow"; // Adjust to "./components/MintingFlow" if components folder is inside app/
+import sdk from "farcasterminiapp-sdk"; // Or import context provider if used
 
 interface User {
   fid: number;
