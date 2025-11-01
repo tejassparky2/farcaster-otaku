@@ -5,7 +5,7 @@ import { wagmiConfig } from "../lib/wagmi";
 
 export const metadata: Metadata = {
   title: "Farcaster Otaku",
-  description: "Transform your Farcaster PFP into anime NFTs",
+  description: "Transform Farcaster PFP into anime NFTs",
   metadataBase: new URL("https://pushpabeautytips.store"),
 };
 
@@ -23,11 +23,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             splashImageUrl: "https://pushpabeautytips.store/splash.png",
             splashBackgroundColor: "#1a0736",
             subtitle: "Remix your PFP",
-            description: "Transform Farcaster PFP into anime NFTs",
+            description: "Transform PFP into anime NFTs",
             primaryCategory: "art-creativity",
             tags: ["anime", "avatar", "nft"],
             ogTitle: "Otaku Remix",
-            ogDescription: "Transform PFP to anime",
+            ogDescription: "Transform to anime",
             ogImageUrl: "https://pushpabeautytips.store/hero.png",
           })}
         />
