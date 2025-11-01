@@ -18,10 +18,13 @@ export default function Home() {
     const initializeMiniApp = async () => {
       try {
         const context = await sdk.context;
+        // Console log for debugging
+        console.log("User Context:", context.user);
         setUser({
           fid: context.user.fid ?? 0,
           username: context.user.username ?? "",
-          pfp: { url: context.user.pfp?.url ?? "" },
+          // Change this line according to your actual context structure!
+          pfp: { url: context.user.pfp_url ?? "" }
         });
         await sdk.actions.ready();
         setReady(true);
@@ -34,31 +37,5 @@ export default function Home() {
     initializeMiniApp();
   }, []);
 
-  if (!ready) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Loading Farcaster Otaku...</h1>
-          <p>Getting your creativity ready</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Error Loading Mini-App</h1>
-          <p className="text-red-500">{error}</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <main className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900">
-      <MintingFlow user={user} />
-    </main>
-  );
+  // ...rest of your rendering code
 }
