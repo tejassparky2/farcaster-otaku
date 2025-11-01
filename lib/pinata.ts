@@ -40,5 +40,5 @@ export async function uploadOtakuToPinata(
   });
 
   const data = await response.json();
-  return data.IpfsHash;
+  return data.IpfsHash as string;
 }
