@@ -19,9 +19,9 @@ export default function Home() {
       try {
         const context = await sdk.context;
         setUser({
-          fid: context.user.fid,
-          username: context.user.username,
-          pfp: { url: context.user.pfp.url },
+          fid: context.user.fid ?? 0,
+          username: context.user.username ?? "",
+          pfp: { url: context.user.pfp?.url ?? "" },
         });
         await sdk.actions.ready();
         setReady(true);
@@ -31,7 +31,6 @@ export default function Home() {
         setReady(true);
       }
     };
-
     initializeMiniApp();
   }, []);
 
