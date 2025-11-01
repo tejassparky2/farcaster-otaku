@@ -1,0 +1,44 @@
+import { http, createConfig } from 'wagmi';
+import { base } from 'wagmi/chains';
+import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
+
+export const wagmiConfig = createConfig({
+  chains: [base],
+  connectors: [farcasterMiniApp()],
+  transports: {
+    [base.id]: http(process.env.NEXT_PUBLIC_RPC_URL),
+  },
+});
+
+// Smart Contract ABI
+export const FARCASTER_OTAKU_ABI = [
+  {
+    type: 'function',
+    name: 'mint',
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'ipfsHash', type: 'string' },
+      { name: 'fid', type: 'uint256' },
+      { name: 'pfpUrl', type: 'string' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    name: 'MINT_PRICE',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'event',
+    name: 'OtakuMinted',
+    inputs: [
+      { name: 'tokenId', type: 'uint256', indexed: true },
+      { name: 'fid', type: 'uint256', indexed: true },
+      { name: 'minter', type: 'address', indexed: true },
+      { name: 'ipfsHash', type: 'string' },
+    ],
+  },
+];
