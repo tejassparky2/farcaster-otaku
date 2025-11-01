@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { WagmiProvider } from "wagmi";
+import { wagmiConfig } from "../lib/wagmi"; // Adjust import if lib/ or src/lib/
 
 export const metadata: Metadata = {
   title: "Farcaster Otaku - NFT Mini-App",
@@ -10,7 +12,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <WagmiProvider config={wagmiConfig}>
+          {children}
+        </WagmiProvider>
+      </body>
     </html>
   );
 }
