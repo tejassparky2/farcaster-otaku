@@ -4,13 +4,12 @@ import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
 
 export const wagmiConfig = createConfig({
   chains: [base],
-  connectors: [farcasterMiniApp()],
+  connectors: [farcasterMiniApp()], // ONLY Farcaster connector
   transports: {
-    [base.id]: http(process.env.NEXT_PUBLIC_RPC_URL as string),
+    [base.id]: http(process.env.NEXT_PUBLIC_RPC_URL),
   },
 });
 
-// Smart Contract ABI
 export const FARCASTER_OTAKU_ABI = [
   {
     type: 'function',
@@ -23,22 +22,5 @@ export const FARCASTER_OTAKU_ABI = [
     ],
     outputs: [{ name: '', type: 'uint256' }],
     stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'MINT_PRICE',
-    inputs: [],
-    outputs: [{ name: '', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'event',
-    name: 'OtakuMinted',
-    inputs: [
-      { name: 'tokenId', type: 'uint256', indexed: true },
-      { name: 'fid', type: 'uint256', indexed: true },
-      { name: 'minter', type: 'address', indexed: true },
-      { name: 'ipfsHash', type: 'string' },
-    ],
   },
 ];
