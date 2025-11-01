@@ -1,0 +1,19 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "Farcaster Otaku",
+    "description": "Transform your Farcaster PFP into cute-but-scary anime creatures and mint as NFTs on Base",
+    "iconUrl": "https://your-domain.vercel.app/icon.png",
+    "homeUrl": "https://your-domain.vercel.app",
+    "splashImageUrl": "https://your-domain.vercel.app/splash.png",
+    "splashBackgroundColor": "#1a1a2e",
+    "primaryCategory": "art-creativity",
+    "tags": ["nft", "anime", "farcaster", "base"],
+    "requiredChains": ["eip155:8453"],
+    "requiredCapabilities": [
+      "actions.ready",
+      "actions.signIn",
+      "wallet.getEthereumProvider"
+    ]
+  }
+}
