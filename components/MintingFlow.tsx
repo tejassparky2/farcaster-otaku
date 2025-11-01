@@ -1,43 +1,48 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
-import ImagePreview from './ImagePreview';
-import WalletConnect from './WalletConnect';
-import LoadingSpinner from './LoadingSpinner';
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import ImagePreview from "./ImagePreview";
+import WalletConnect from "./WalletConnect";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface MintingFlowProps {
-  user: any;
+  user: {
+    fid: number;
+    username: string;
+    pfp: { url: string };
+  } | null;
 }
 
 export default function MintingFlow({ user }: MintingFlowProps) {
-  const [step, setStep] = useState<'connect' | 'generate' | 'preview' | 'mint' | 'complete'>('connect');
+  const [step, setStep] = useState<
+    "connect" | "generate" | "preview" | "mint" | "complete"
+  >("connect");
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [ipfsHash, setIpfsHash] = useState<string | null>(null);
+
   const { address, isConnected } = useAccount();
 
   const handleGenerateImage = async () => {
     if (!user?.pfp?.url) return;
-
     setLoading(true);
     try {
-      const res = await fetch('/api/generate-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pfpUrl: user.pfp.url,
           fid: user.fid,
         }),
       });
-
       const data = await res.json();
       setGeneratedImage(data.imageUrl);
 
       // Upload to IPFS
-      const uploadRes = await fetch('/api/upload-ipfs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const uploadRes = await fetch("/api/upload-ipfs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           imageUrl: data.imageUrl,
           metadata: {
@@ -46,45 +51,70 @@ export default function MintingFlow({ user }: MintingFlowProps) {
           },
         }),
       });
-
       const uploadData = await uploadRes.json();
       setIpfsHash(uploadData.ipfsHash);
-      setStep('preview');
+      setStep("preview");
     } catch (error) {
-      console.error('Generation error:', error);
-      alert('Failed to generate image');
+      console.error("Generation error:", error);
+      alert("Failed to generate image");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      {step === 'connect' && !isConnected && (
-        <WalletConnect onConnected={() => setStep('generate')} />
-      )}
+  if (step === "connect" && !isConnected) {
+    return (
+      <WalletConnect onConnected={() => setStep("generate")} />
+    );
+  }
 
-      {step === 'generate' && (
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">🎨 Farcaster Otaku</h1>
-          <p className="text-gray-300 mb-8">Transform your PFP into a cute-but-scary anime creature!</p>
+  if (step === "generate") {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 min-h-[60vh] max-w-xl mx-auto text-center">
+        <h1 className="text-2xl font-bold mb-2">🎨 Farcaster Otaku</h1>
+        <p className="mb-4 text-lg">
+          Transform your PFP into a cute-but-scary anime creature!
+        </p>
+        <button
+          onClick={handleGenerateImage}
+          disabled={loading}
+          className="bg-purple-700 px-4 py-2 text-white font-bold rounded shadow hover:bg-purple-800 transition-all disabled:opacity-70"
+        >
+          {loading ? <LoadingSpinner /> : "Generate My Otaku"}
+        </button>
+      </div>
+    );
+  }
+
+  if (step === "preview" && generatedImage) {
+    return (
+      <ImagePreview
+        imageUrl={generatedImage}
+        ipfsHash={ipfsHash}
+        fid={user?.fid ?? 0}
+        pfpUrl={user?.pfp?.url ?? ""}
+        onComplete={() => setStep("complete")}
+      />
+    );
+  }
+
+  if (step === "complete") {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh] text-center">
+        <div>
+          <h2 className="text-2xl font-bold mb-3">🎉 Success!</h2>
+          <p className="mb-2">Your Otaku NFT was minted to your wallet.</p>
           <button
-            onClick={handleGenerateImage}
-            disabled={loading}
-            className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-lg hover:shadow-lg disabled:opacity-50"
+            onClick={() => setStep("generate")}
+            className="mt-4 bg-purple-700 px-4 py-2 text-white font-bold rounded hover:bg-purple-800 transition"
           >
-            {loading ? <LoadingSpinner /> : 'Generate My Otaku'}
+            Mint Another
           </button>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {step === 'preview' && generatedImage && (
-        <ImagePreview
-          imageUrl={generatedImage}
-          fid={user.fid}
-          onMint={() => setStep('mint')}
-        />
-      )}
-    </div>
-  );
+  // Default fallback
+  return null;
 }

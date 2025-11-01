@@ -1,119 +1,108 @@
 "use client";
 
 import { useState } from "react";
-import { useAccount } from "wagmi";
-import ImagePreview from "./ImagePreview";
-import WalletConnect from "./WalletConnect";
+import { useAccount, useWriteContract } from "wagmi";
+import { parseEther } from "viem";
 import LoadingSpinner from "./LoadingSpinner";
 
-interface MintingFlowProps {
-  user: {
-    fid: number;
-    username: string;
-    pfp: { url: string };
-  } | null;
+interface ImagePreviewProps {
+  imageUrl: string;
+  ipfsHash: string | null;
+  fid: number;
+  pfpUrl: string;
+  onComplete: () => void;
 }
 
-export default function MintingFlow({ user }: MintingFlowProps) {
-  const [step, setStep] = useState<
-    "connect" | "generate" | "preview" | "mint" | "complete"
-  >("connect");
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [ipfsHash, setIpfsHash] = useState<string | null>(null);
-  const { address, isConnected } = useAccount();
+const CONTRACT_ABI = [
+  {
+    type: "function",
+    name: "mint",
+    inputs: [
+      { name: "to", type: "address" },
+      { name: "ipfsHash", type: "string" },
+      { name: "fid", type: "uint256" },
+      { name: "pfpUrl", type: "string" },
+    ],
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "payable",
+  },
+];
 
-  const handleGenerateImage = async () => {
-    if (!user?.pfp?.url) return;
-    setLoading(true);
+export default function ImagePreview({
+  imageUrl,
+  ipfsHash,
+  fid,
+  pfpUrl,
+  onComplete,
+}: ImagePreviewProps) {
+  const { address } = useAccount();
+  const [minting, setMinting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { writeContract, isPending } = useWriteContract();
+
+  const handleMint = async () => {
+    if (!writeContract || !address || !ipfsHash) {
+      setError("Contract configuration failed");
+      return;
+    }
+    setMinting(true);
+    setError(null);
     try {
-      const res = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pfpUrl: user.pfp.url,
-          fid: user.fid,
-        }),
+      await writeContract({
+        address: process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`,
+        abi: CONTRACT_ABI,
+        functionName: "mint",
+        args: [
+          address as `0x${string}`,
+          ipfsHash,
+          BigInt(fid),
+          pfpUrl,
+        ],
+        value: parseEther("0.0007"),
       });
-      const data = await res.json();
-      setGeneratedImage(data.imageUrl);
-
-      // Upload to IPFS
-      const uploadRes = await fetch("/api/upload-ipfs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          imageUrl: data.imageUrl,
-          metadata: {
-            fid: user.fid,
-            pfpUrl: user.pfp.url,
-          },
-        }),
-      });
-      const uploadData = await uploadRes.json();
-      setIpfsHash(uploadData.ipfsHash);
-      setStep("preview");
-    } catch (error) {
-      console.error("Generation error:", error);
-      alert("Failed to generate image");
-    } finally {
-      setLoading(false);
+      setMinting(false);
+      onComplete();
+    } catch (err: any) {
+      setError(err.message || "Transaction failed");
+      setMinting(false);
     }
   };
 
-  if (step === "connect" && !isConnected) {
-    return (
-      <WalletConnect onConnected={() => setStep("generate")} />
-    );
-  }
-
-  if (step === "generate") {
-    return (
-      <div className="flex flex-col items-center justify-center gap-4 min-h-[60vh] max-w-xl mx-auto text-center">
-        <h1 className="text-2xl font-bold mb-2">🎨 Farcaster Otaku</h1>
-        <p className="mb-4 text-lg">
-          Transform your PFP into a cute-but-scary anime creature!
-        </p>
-        <button
-          onClick={handleGenerateImage}
-          disabled={loading}
-          className="bg-purple-700 px-4 py-2 text-white font-bold rounded shadow hover:bg-purple-800 transition-all disabled:opacity-70"
-        >
-          {loading ? <LoadingSpinner /> : "Generate My Otaku"}
-        </button>
+  return (
+    <div className="bg-black rounded-2xl p-6 shadow-lg w-full max-w-xl mx-auto text-white text-center border border-purple-900">
+      <h3 className="text-xl mb-2 font-bold">Your Otaku is Ready!</h3>
+      <img src={imageUrl} alt="Otaku Preview" className="mx-auto rounded-lg mb-5 max-h-64 border border-purple-700"/>
+      <div className="mb-4">
+        <p><strong>Name:</strong> Farcaster Otaku #{fid}</p>
+        <p><strong>FID:</strong> {fid}</p>
+        <p><strong>IPFS:</strong> {ipfsHash ? `ipfs://${ipfsHash}` : "Pending"}</p>
+        <p><strong>Chain:</strong> Base (eip155:8453)</p>
+        <p><strong>Price:</strong> 0.0007 ETH + gas</p>
       </div>
-    );
-  }
 
-  if (step === "preview" && generatedImage) {
-    return (
-      <ImagePreview
-        imageUrl={generatedImage}
-        ipfsHash={ipfsHash}
-        fid={user?.fid ?? 0}
-        pfpUrl={user?.pfp?.url ?? ""}
-        onComplete={() => setStep("complete")}
-      />
-    );
-  }
-
-  if (step === "complete") {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh] text-center">
-        <div>
-          <h2 className="text-2xl font-bold mb-3">🎉 Success!</h2>
-          <p className="mb-2">Your Otaku NFT was minted to your wallet.</p>
+      {error && (
+        <div className="my-3">
+          <span className="text-red-400">{error}</span>
           <button
-            onClick={() => setStep("generate")}
-            className="mt-4 bg-purple-700 px-4 py-2 text-white font-bold rounded hover:bg-purple-800 transition"
+            className="text-sm text-red-300 hover:text-red-200 mt-2 underline"
+            onClick={() => setError(null)}
           >
-            Mint Another
+            Dismiss
           </button>
         </div>
-      </div>
-    );
-  }
+      )}
 
-  // Default fallback
-  return null;
+      {(minting || isPending) && <LoadingSpinner />}
+      <button
+        onClick={handleMint}
+        disabled={minting || isPending || !ipfsHash}
+        className="mt-4 bg-purple-800 text-white px-6 py-2 rounded shadow font-bold hover:bg-purple-700 disabled:bg-gray-700 transition-all"
+      >
+        {minting || isPending ? "Minting to Base..." : "🚀 Mint NFT (0.0007 ETH + gas)"}
+      </button>
+      <div className="mt-2 text-xs text-gray-300">
+        Confirm the transaction in your wallet.
+      </div>
+    </div>
+  );
 }
