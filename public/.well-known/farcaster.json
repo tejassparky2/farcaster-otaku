@@ -1,17 +1,19 @@
 {
-  "version": 1,
-  "name": "Farcaster Otaku",
-  "iconUrl": "https://pushpabeautytips.store/icon.png",
-  "homeUrl": "https://pushpabeautytips.store",
-  "subtitle": "Remix your Farcaster PFP",
-  "description": "Transform your Farcaster PFP into cute-but-scary anime creatures and mint as NFTs on Base.",
-  "primaryCategory": "art-creativity",
-  "splashImageUrl": "https://pushpabeautytips.store/splash.png",
-  "splashBackgroundColor": "#1a0736",
-  "tags": ["anime", "avatar", "farcaster", "nft", "otaku"],
-  "heroImageUrl": "https://pushpabeautytips.store/hero.png",
-  "tagline": "Mint your Farcaster Otaku now!",
-  "ogTitle": "Otaku Remix",
-  "ogDescription": "Transform your PFP into anime and mint instantly!",
-  "ogImageUrl": "https://pushpabeautytips.store/hero.png"
+  "miniapp": {
+    "version": "1",
+    "name": "Farcaster Otaku",
+    "homeUrl": "https://pushpabeautytips.store",
+    "iconUrl": "https://pushpabeautytips.store/icon.png",
+    "splashImageUrl": "https://pushpabeautytips.store/splash.png",
+    "splashBackgroundColor": "#1a0736",
+    "subtitle": "Remix your PFP",
+    "description": "Transform your Farcaster PFP into cute anime creatures and mint as NFTs on Base.",
+    "primaryCategory": "art-creativity",
+    "tags": ["anime", "avatar", "farcaster", "nft", "otaku"],
+    "heroImageUrl": "https://pushpabeautytips.store/hero.png",
+    "tagline": "Mint your Otaku now",
+    "ogTitle": "Otaku Remix",
+    "ogDescription": "Transform PFP to anime NFT",
+    "ogImageUrl": "https://pushpabeautytips.store/hero.png"
+  }
 }
