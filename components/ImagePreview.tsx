@@ -45,12 +45,11 @@ export default function ImagePreview({
       setError("Contract configuration failed");
       return;
     }
-
     setMinting(true);
     setError(null);
-
     try {
-      const tx = await writeContract({
+      // Wagmi v2+ writeContract returns void, so there's no tx.wait
+      await writeContract({
         address: process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`,
         abi: CONTRACT_ABI,
         functionName: "mint",
@@ -62,8 +61,6 @@ export default function ImagePreview({
         ],
         value: parseEther("0.0007"),
       });
-
-      await tx.wait?.(); // some wagmi versions use tx.wait(), some use tx.receipt
       setMinting(false);
       onComplete();
     } catch (err: any) {
