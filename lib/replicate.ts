@@ -1,4 +1,4 @@
-export async function generateAnimeOtaku(
+export async function generateAnimeImage(
   pfpUrl: string,
   fid: number
 ): Promise<string> {
