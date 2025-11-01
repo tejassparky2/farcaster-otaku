@@ -1,27 +1,28 @@
 {
-  "miniapp": {
-    "version": "1",
-    "name": "Farcaster Otaku",
-    "iconUrl": "https://pushpabeautytips.store/icon.png",
-    "subtitle": "Transform your Farcaster avatar",
-    "description": "Transform your Farcaster PFP into cute-but-scary anime creatures and mint as NFTs on Base.",
-    "primaryCategory": "art-creativity",
-    "heroImageUrl": "https://pushpabeautytips.store/hero.png",
-    "splashImageUrl": "https://pushpabeautytips.store/splash.png",
-    "splashBackgroundColor": "#1a0736",
-    "tags": [
-      "anime",
-      "avatar",
-      "farcaster",
-      "nft",
-      "otaku",
-      "creativity"
-    ],
-    "tagline": "Mint your Farcaster Otaku now!",
-    "buttonTitle": "Remix & Mint",
-    "ogTitle": "Farcaster Otaku – Remix your avatar",
-    "ogDescription": "Transform your Farcaster PFP into a unique anime character and mint it instantly!",
-    "ogImageUrl": "https://pushpabeautytips.store/hero.png",
-    "homeUrl": "https://pushpabeautytips.store"
-  }
+  "version": 1,
+  "name": "Farcaster Otaku",
+  "iconUrl": "https://pushpabeautytips.store/icon.png",
+  "homeUrl": "https://pushpabeautytips.store",
+  "imageUrl": "https://pushpabeautytips.store/hero.png",
+  "buttonTitle": "Remix & Mint",
+  "splashImageUrl": "https://pushpabeautytips.store/splash.png",
+  "splashBackgroundColor": "#1a0736",
+  "webhookUrl": "",
+  "subtitle": "Remix your Farcaster PFP",
+  "description": "Transform your Farcaster PFP into cute-but-scary anime creatures and mint as NFTs on Base.",
+  "screenshotUrls": [],
+  "primaryCategory": "art-creativity",
+  "tags": [
+    "anime",
+    "avatar",
+    "farcaster",
+    "nft",
+    "otaku",
+  ],
+  "heroImageUrl": "https://pushpabeautytips.store/hero.png",
+  "tagline": "Mint your Farcaster Otaku now!",
+  "ogTitle": "Otaku Remix",
+  "ogDescription": "Transform your Farcaster PFP into a unique anime character and mint it instantly!",
+  "ogImageUrl": "https://pushpabeautytips.store/hero.png",
+  "castShareUrl": "https://pushpabeautytips.store"
 }
